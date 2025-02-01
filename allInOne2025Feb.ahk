@@ -1,16 +1,6 @@
 ;Aether 2024 
-; Contains 
-; win+ q to rightclick 
-; altshift+mouse to volume 
-; win + space to media control 
-; hjkl to arrow keys 
-; win + [] to brighness 
-; toggle on/ off title bar
-; Share with win+s
-; Double-clicking the middle mouse button (MButton) sends the space bar.
-; middle click twice to plaay /
 
-;mouse without borders
+;MOUSE WITHOUT BORDERS 
 
 SetTimer, CheckMousePosition, 100  ; Check the mouse position every 100 ms
 
@@ -32,58 +22,42 @@ if GetKeyState("Control", "P")
         ; For X = 2559 (send Ctrl+Win+Right)
         if (mouseX = 2559)
         {
-            if (!isInPosition)  ; If it wasn't already detected as being in position
+            if (!isInPosition)  
             {
-                lastMoveTime := A_TickCount  ; Store the time when the mouse enters the position
-                isInPosition := true  ; Set flag to true
+                lastMoveTime := A_TickCount 
+                isInPosition := true 
             }
-            else if (A_TickCount - lastMoveTime >= timeout)  ; If the mouse stays in position for more than timeout ms
+            else if (A_TickCount - lastMoveTime >= timeout)  
             {
-                Send, ^#{Right}  ; Send Ctrl+Win+Right key combination
-                isInPosition := false  ; Reset the flag
+                Send, ^#{Right}  
+                
+                isInPosition := false  
             }
         }
 
         ; For X = 0 (send Ctrl+Win+Left)
         else if (mouseX = 0)
         {
-            if (!isInPosition)  ; If it wasn't already detected as being in position
+            if (!isInPosition)  
             {
-                lastMoveTime := A_TickCount  ; Store the time when the mouse enters the position
-                isInPosition := true  ; Set flag to true
-            }
-            else if (A_TickCount - lastMoveTime >= timeout)  ; If the mouse stays in position for more than timeout ms
+                lastMoveTime := A_TickCount 
+                isInPosition := true  
+            else if (A_TickCount - lastMoveTime >= timeout)  
             {
-                Send, ^#{Left}  ; Send Ctrl+Win+Left key combination
-                isInPosition := false  ; Reset the flag
+                Send, ^#{Left}  
+                isInPosition := false  
             }
         }
 
-        ; For Y = 1359 (send Win+Tab)
-        ; else if (mouseY = 0)
-        ; {
-        ;     if (!isInPosition)  ; If it wasn't already detected as being in position
-        ;     {
-        ;         lastMoveTime := A_TickCount  ; Store the time when the mouse enters the position
-        ;         isInPosition := true  ; Set flag to true
-        ;     }
-        ;     else if (A_TickCount - lastMoveTime >= timeout)  ; If the mouse stays in position for more than timeout ms
-        ;     {
-        ;         Send, #{Tab}  ; Send Win+Tab key combination
-        ;         isInPosition := false  ; Reset the flag
-        ;     }
-        ; }
-        ; else  ; If the mouse is not at any of the desired X or Y coordinates
-        ; {
-        ;     isInPosition := false  ; Reset the flag
-        ; }
+
+
 
     }
 }
 
 return
 
-; Define variables for detecting double-press
+; DOUBLE TAP ESCAPE TO UNDO 
 EscPressTime := 0
 DoublePressThreshold := 400 ; Time in milliseconds
 
@@ -116,15 +90,17 @@ return
 
 #if 
 
+; DOUBLE TAP MIDDLE MOUSE TO PLAY PAUSE [SENDS SPACE]
 
 ~MButton::
-    if (A_PriorHotkey = "~MButton" && A_TimeSincePriorHotkey < 400) ; Adjust timing as needed
+    if (A_PriorHotkey = "~MButton" && A_TimeSincePriorHotkey < 400) 
     {
         Send, {Space}
         return
     }
 return
 
+; RIGHT CLICK CONTEXT MENU
 
 #q::
     Send, +{F10}
@@ -134,17 +110,19 @@ return
     !+MButton::Volume_Mute	
 return
 
+
+; VOLUME CONTROLS 
 !+]:: 
     Send { Volume_Up 2 } ;
 return
 !+[:: 
     Send { Volume_Down 2 } ;
 return
-; AutoHotkey Media Keys
+; MEDIA CONTROL 
 #Space:: 
     Send { Media_Play_Pause }
 return
-; Borderless Windows
+; TOGGLE TITLEBAR ON/ OFF
 ^#h::
     WinGet, style, Style, A
     if (style & 0xC00000)  ; Check if the caption is currently enabled
@@ -156,10 +134,9 @@ return
         WinSet, Style, +0xC00000, A  ; Add caption
         WinSet, ExStyle, +0x00000100, A ; Restore the frame or "window edge"
     }
-    ; WinMove, A, , 0, 0, %A_ScreenWidth%, %A_ScreenHeight% ; Optional: Resize to fullscreen
     return
 
-; Brightness Controls
+; BRIGHTNESS CONTROL
 
 #[:: Brightness("-5") ; Reduces brightness by 5%
 #]:: Brightness("+5") ; Increases brightness by 5%
@@ -175,7 +152,7 @@ return
     }
 
 
-; Arrow Keys
+; ARROW KEYS 
 !h:: Send, { Left }
 !j:: Send, { Down }
 !k:: Send, { Up }
@@ -183,7 +160,7 @@ return
 return 
 
 
-
+; CAPS TO CONTROL 
 *CapsLock::
     Send {Blind}{Ctrl Down}
     cDown := A_TickCount
@@ -196,6 +173,7 @@ Return
         Send {Blind}{Ctrl Up}
 Return
 
+; CAPS LOCK TOGGLE 
 ^CapsLock::
     SetCapsLockState, % GetKeyState("CapsLock", "T") ? "Off" : "On"
     Return
@@ -205,11 +183,11 @@ Return
     Return
 
 
-
+; WIND Q TO DELETE
 !q::
     Send {delete}
 
-; Alt + Caps Lock sends Enter
+; ALT CAPS TO ENTER 
 !CapsLock::
     Send {Enter}
 Return
